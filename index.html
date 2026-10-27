@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="ChankArts Metronome — precise tempo from 30 to 300 BPM with Indian classical time signatures. Runs entirely in your browser.">
+  <meta name="theme-color" content="#121212">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="ChankArts Metronome">
+  <link rel="apple-touch-icon" href="assets/images/icons/icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/favicon.png">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <title>ChankArts Metronome</title>
+  <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+
+  <!-- ============ Splash (PoweredBySplashPage) ============ -->
+  <div id="splash" class="splash" role="status" aria-live="polite">
+    <div class="splash-inner">
+      <div class="splash-circle">
+        <img src="assets/images/labs_512.png" alt="ChankArts Digital Labs" draggable="false">
+      </div>
+      <div class="splash-brand">ChankArts Digital Labs</div>
+      <div class="splash-progress"><div class="splash-progress-bar"></div></div>
+      <div class="splash-hint">Preparing metronome...</div>
+    </div>
+  </div>
+
+  <!-- ============ Metronome (MetronomePage) ============ -->
+  <div id="app" class="app" hidden>
+    <main class="shell">
+      <div class="content">
+
+        <!-- Return to main ChankArts website -->
+        <nav class="top-bar">
+          <a class="back-fab" href="https://chankarts.com/" aria-label="Back to ChankArts.com">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+          </a>
+        </nav>
+
+        <!-- Header -->
+        <header class="header">
+          <div class="logo-box">
+            <img src="assets/images/logo_256.png" alt="ChankArts Metronome logo" draggable="false">
+          </div>
+          <h1 class="title">ChankArts Metronome</h1>
+        </header>
+
+        <!-- Beat indicators -->
+        <div class="beats" id="beatRow" aria-hidden="true"></div>
+
+        <!-- BPM controls -->
+        <div class="bpm-row">
+          <div class="step-col">
+            <button type="button" class="step-btn" id="bpmMinus1" aria-label="Decrease BPM by 1">-1</button>
+            <button type="button" class="step-btn" id="bpmMinus5" aria-label="Decrease BPM by 5">-5</button>
+          </div>
+          <div class="bpm-display">
+            <div class="bpm-value" id="bpmValue">120</div>
+            <div class="bpm-label">BPM</div>
+          </div>
+          <div class="step-col">
+            <button type="button" class="step-btn" id="bpmPlus1" aria-label="Increase BPM by 1">+1</button>
+            <button type="button" class="step-btn" id="bpmPlus5" aria-label="Increase BPM by 5">+5</button>
+          </div>
+        </div>
+
+        <!-- Slider -->
+        <div class="slider-wrap">
+          <input type="range" id="bpmSlider" min="30" max="300" step="1" value="120"
+                 aria-label="Tempo in beats per minute">
+        </div>
+
+        <!-- Time signature select (DropdownButtonFormField) -->
+        <div class="field" id="sigField">
+          <button type="button" class="field-control" id="sigButton" aria-haspopup="listbox" aria-expanded="false">
+            <span class="field-label">Time Signature</span>
+            <span class="field-value" id="sigValue">4/4</span>
+            <span class="field-arrow" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+            </span>
+          </button>
+          <ul class="menu" id="sigMenu" role="listbox" hidden></ul>
+        </div>
+
+        <!-- Carnatic / Hindustani info (PopupMenuButton) -->
+        <div class="field" id="rhythmField">
+          <button type="button" class="rhythm-box" id="rhythmButton" aria-haspopup="listbox" aria-expanded="false">
+            <span class="rhythm-text">
+              <span class="rhythm-carnatic" id="rhythmCarnatic">Carnatic: Adi (4/4 feel)</span>
+              <span class="rhythm-hindustani" id="rhythmHindustani">Hindustani: Teentaal</span>
+            </span>
+            <span class="field-arrow" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+            </span>
+          </button>
+          <ul class="menu menu-wide" id="rhythmMenu" role="listbox" hidden></ul>
+        </div>
+
+        <!-- Start / Stop -->
+        <button type="button" class="start-btn" id="startStop">Start</button>
+
+        <!-- Return to main ChankArts website -->
+        <a class="back-link" href="https://chankarts.com/">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+          Back to ChankArts.com
+        </a>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>

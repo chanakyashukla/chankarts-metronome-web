@@ -1,0 +1,24 @@
+{
+  "name": "ChankArts Metronome",
+  "short_name": "Metronome",
+  "description": "ChankArts Metronome — precise tempo from 30 to 300 BPM with Indian classical time signatures. Runs entirely in your browser.",
+  "id": "chankarts-metronome",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "assets/images/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

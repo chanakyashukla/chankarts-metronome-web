@@ -1,0 +1,616 @@
+/* ============================================================
+   ChankArts Metronome — Web (PWA)
+   Values mirror the Flutter source (metronome_page.dart,
+   powered_by_splash_page.dart, main.dart) 1:1.
+   ============================================================ */
+
+:root {
+  --bg:            #121212;  /* scaffoldBackgroundColor */
+  --surface:       #1A1A1A;  /* colorScheme.surface / containers */
+  --accent-red:    #E53935;  /* beat-1 dot */
+  --deep-blue:     #1E88E5;  /* primary / start button / slider */
+  --active-green:  #43A047;  /* active beat ring */
+  --splash-circle: #0B0B0B;
+  --progress-bg:   #262626;
+
+  --white:    #FFFFFF;
+  --white70:  rgba(255, 255, 255, 0.70);
+  --white54:  rgba(255, 255, 255, 0.54);
+  --white24:  rgba(255, 255, 255, 0.24);
+  --white12:  rgba(255, 255, 255, 0.12);
+  --white08:  rgba(255, 255, 255, 0.08);
+  --white06:  rgba(255, 255, 255, 0.06);
+
+  /* non-compact layout (Flutter: availableHeight >= 720) */
+  --top-padding:   24px;
+  --section-gap:   28px;
+  --mid-gap:       16px;
+  --side-gap:      18px;
+  --bpm-font:      96px;
+  --button-h:      58px;
+  --button-font:   22px;
+  --logo-box:      76px;
+  --logo-pad:      9px;
+  --logo-radius:   22px;
+  --title-font:    26px;
+  --title-gap:     16px;
+  --beat-size:     24px;
+  --beat-inner:    13px;
+  --beat-gap:      16px;
+  --step-w:        56px;
+  --step-h:        40px;
+  --step-font:     17px;
+  --field-pad-v:   18px;
+  --rhythm-pad:    16px;
+  --rhythm-font:   15px;
+  --rhythm-gap:    8px;
+}
+
+/* compact layout (Flutter: availableHeight < 720) */
+@media (max-height: 720px) {
+  :root {
+    --top-padding: 16px;
+    --section-gap: 20px;
+    --mid-gap:     12px;
+    --side-gap:    14px;
+    --bpm-font:    84px;
+    --button-h:    54px;
+    --button-font: 21px;
+    --logo-box:    68px;
+    --logo-pad:    8px;
+    --logo-radius: 20px;
+    --title-font:  24px;
+    --title-gap:   12px;
+    --beat-size:   22px;
+    --beat-inner:  12px;
+    --beat-gap:    14px;
+    --step-w:      54px;
+    --step-h:      38px;
+    --step-font:   16px;
+    --field-pad-v: 14px;
+    --rhythm-pad:  14px;
+    --rhythm-font: 14px;
+    --rhythm-gap:  6px;
+  }
+}
+
+/* narrow phones (e.g. 320px iPhone SE): keep the BPM row on-screen */
+@media (max-width: 360px) {
+  :root {
+    --bpm-font: 72px;
+    --side-gap: 12px;
+    --title-font: 22px;
+    --section-gap: 24px;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  min-height: 100%;
+}
+
+body {
+  font-family: "Roboto", "Helvetica Neue", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img { -webkit-user-select: none; user-select: none; }
+
+/* ============================================================
+   Splash
+   ============================================================ */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: opacity 250ms cubic-bezier(0, 0, 0.2, 1); /* Curves.easeOut */
+}
+
+.splash.is-leaving { opacity: 0; pointer-events: none; }
+
+.splash-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.splash-circle {
+  width: clamp(190px, 60vw, 290px);
+  height: clamp(190px, 60vw, 290px);
+  padding: 11%;
+  background: var(--splash-circle);
+  border: 1.4px solid var(--white24);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.splash-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.splash-brand {
+  margin-top: 22px;
+  max-width: clamp(220px, 76vw, 340px);
+  text-align: center;
+  color: var(--white70);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.splash-progress {
+  position: relative;              /* contain the absolute progress bar */
+  margin-top: 28px;
+  width: clamp(220px, 76vw, 340px);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--progress-bg);
+  overflow: hidden;
+}
+
+.splash-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--deep-blue);
+  animation: splash-slide 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes splash-slide {
+  from { transform: translateX(-110%); }
+  to   { transform: translateX(330%); }
+}
+
+.splash-hint {
+  margin-top: 12px;
+  color: var(--white54);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   App shell
+   ============================================================ */
+
+.app {
+  min-height: 100dvh;
+  opacity: 0;
+  transition: opacity 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.app.is-visible { opacity: 1; }
+
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  width: 100%;
+  max-width: 420px;
+  padding: max(var(--top-padding), env(safe-area-inset-top)) 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* ============================================================
+   Header
+   ============================================================ */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-box {
+  width: var(--logo-box);
+  height: var(--logo-box);
+  padding: var(--logo-pad);
+  background: var(--surface);
+  border: 1px solid var(--white24);
+  border-radius: var(--logo-radius);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.13);
+}
+
+.logo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.title {
+  margin: var(--title-gap) 0 0;
+  text-align: center;
+  color: var(--white);
+  font-size: var(--title-font);
+  font-weight: 700;
+}
+
+/* ============================================================
+   Beat indicators
+   ============================================================ */
+
+.beats {
+  margin-top: var(--section-gap);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.beat {
+  width: var(--beat-size);
+  height: var(--beat-size);
+  border: 2px solid transparent;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin-right: var(--beat-gap);
+  transition: transform 100ms ease, border-color 100ms ease;
+}
+
+.beat:last-child { margin-right: 0; }
+
+.beat .dot {
+  width: var(--beat-inner);
+  height: var(--beat-inner);
+  border-radius: 50%;
+  background: var(--white);
+}
+
+.beat.is-downbeat .dot { background: var(--accent-red); }
+
+.beat.is-active {
+  border-color: var(--active-green);
+  transform: scale(1.12);
+}
+
+/* ============================================================
+   BPM controls
+   ============================================================ */
+
+.bpm-row {
+  margin-top: var(--section-gap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-btn {
+  width: var(--step-w);
+  height: var(--step-h);
+  background: var(--surface);
+  color: var(--white);
+  border: 1px solid var(--white24);
+  border-radius: 14px;
+  padding: 0;
+  font-size: var(--step-font);
+  font-weight: 700;
+  transition: background 120ms ease;
+}
+
+.step-btn:hover  { background: #242424; }
+.step-btn:active { background: #2C2C2C; }
+
+.bpm-display {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bpm-value {
+  color: var(--white);
+  font-size: var(--bpm-font);
+  font-weight: 700;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.bpm-label {
+  margin-top: 6px;
+  color: var(--white70);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   Slider
+   ============================================================ */
+
+.slider-wrap {
+  margin-top: 10px;
+  padding: 0 calc(var(--side-gap) / 2);
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 32px;
+  background: transparent;
+  margin: 0;
+  display: block;
+}
+
+input[type="range"]:focus { outline: none; }
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--deep-blue) 0 var(--pct, 33.3%),
+    var(--white24) var(--pct, 33.3%) 100%
+  );
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--deep-blue);
+  margin-top: -5.5px;
+  transition: box-shadow 120ms ease;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px rgba(30, 136, 229, 0.18); }
+input[type="range"]:active::-webkit-slider-thumb { box-shadow: 0 0 0 12px rgba(30, 136, 229, 0.22); }
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--white24);
+}
+
+input[type="range"]::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--deep-blue);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border: none;
+  border-radius: 50%;
+  background: var(--deep-blue);
+}
+
+/* ============================================================
+   Fields / menus (time signature + rhythm info)
+   ============================================================ */
+
+.field { position: relative; margin-top: 0; }
+
+.slider-wrap + .field { margin-top: var(--section-gap); }
+.field + .field { margin-top: var(--mid-gap); }
+.field + .start-btn { margin-top: var(--section-gap); }
+
+/* Time signature — DropdownButtonFormField look */
+.field-control {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  color: var(--white);
+  border: 1px solid var(--white24);
+  border-radius: 14px;
+  padding: var(--field-pad-v) 8px var(--field-pad-v) 16px;
+  text-align: left;
+  transition: border-color 120ms ease;
+}
+
+.field-control:hover,
+.field.is-open .field-control { border-color: var(--deep-blue); border-width: 1.4px; padding: calc(var(--field-pad-v) - 0.4px) 7.6px calc(var(--field-pad-v) - 0.4px) 15.6px; }
+
+.field-label {
+  position: absolute;
+  top: -9px;
+  left: 12px;
+  background: var(--surface);
+  padding: 0 5px;
+  color: var(--white70);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  pointer-events: none;
+}
+
+.field-value {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--white);
+}
+
+.field-arrow {
+  display: inline-flex;
+  color: var(--white70);
+  flex-shrink: 0;
+}
+
+/* Rhythm info — PopupMenuButton look */
+.rhythm-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  color: var(--white);
+  border: 1px solid var(--white24);
+  border-radius: 16px;
+  padding: var(--rhythm-pad);
+  text-align: left;
+  transition: background 120ms ease;
+}
+
+.rhythm-box:hover { background: #202020; }
+
+.rhythm-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-gap);
+}
+
+.rhythm-carnatic {
+  color: var(--white);
+  font-size: var(--rhythm-font);
+  font-weight: 600;
+}
+
+.rhythm-hindustani {
+  color: var(--white70);
+  font-size: var(--rhythm-font);
+  font-weight: 500;
+}
+
+/* Shared popup menu */
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 8px 0;
+  list-style: none;
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+.menu-wide { border-radius: 16px; }
+
+.menu li {
+  padding: 13px 16px;
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu li:hover,
+.menu li.is-selected { background: var(--white12); }
+
+/* ============================================================
+   Start / Stop
+   ============================================================ */
+
+.start-btn {
+  width: 100%;
+  height: var(--button-h);
+  background: var(--deep-blue);
+  color: var(--white);
+  border: none;
+  border-radius: 16px;
+  font-size: var(--button-font);
+  font-weight: 700;
+  transition: background 120ms ease;
+}
+
+.start-btn:hover  { background: #2A93EB; }
+.start-btn:active { background: #1976D2; }
+.start-btn.is-playing { background: #1976D2; }
+
+/* ============================================================
+   Return to main ChankArts website
+   ============================================================ */
+
+.top-bar {
+  display: flex;
+  justify-content: flex-start;
+  margin: -6px 0 2px;
+}
+
+.back-fab {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--white24);
+  color: var(--white70);
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.back-fab:hover {
+  background: #242424;
+  color: var(--white);
+}
+
+.start-btn + .back-link { margin-top: 14px; }
+
+.back-link {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--white70);
+  border: 1px solid var(--white24);
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.back-link:hover {
+  background: var(--surface);
+  color: var(--white);
+}
+
+/* ============================================================
+   Misc
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-progress-bar { animation-duration: 2.8s; }
+  .beat { transition: none; }
+  .splash, .app { transition-duration: 0ms; }
+}
